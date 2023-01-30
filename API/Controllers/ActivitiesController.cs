@@ -15,20 +15,21 @@ namespace API.Controllers
  
         public ActivitiesController(DataContext context)
         {
-      _context = context;
+         _context = context;
    
         }
 
         [HttpGet] //api/activities
         public async Task<ActionResult<List<Activity>>> GetActivities()
         {
-            return await _context.Activities.ToListAsync();
+            return await _context.Activities.ToListAsync(); // it returns all 
         }
-        [HttpGet("{id}")] //api/activities/someId
 
+
+        [HttpGet("{id}")] //api/activities/someId
         public async Task<ActionResult<Activity>>GetActivity(Guid id) // this id gonna match this [HttpGet("{id}")] so this id /someId
         {
-             return await _context.Activities.FindAsync(id);
+             return await _context.Activities.FindAsync(id);  // it returns only one record with appropriate id
         }
     }
 }
