@@ -30,3 +30,5 @@ namespace Application.Activities
     }
   }
 }
+
+// receive request from client -> controller -> application -> db

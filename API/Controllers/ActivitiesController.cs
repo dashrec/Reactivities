@@ -5,8 +5,10 @@ using Application.Activities;
 using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
-
-
+// our controllers are going to receive an HTTP request from a client and controller is going to send this request to application layer
+// it's going to respond with an HTP response, and that's what is going to pass back out to the client.
+// When a request comes to our API controller, we're going to send something using the Mediator to send method and we can even make a query or send a command via the mediator.
+// We have API controllers and these are going to retrieve the information from our application layer.
 // it derives from BaseApiController
 {
   public class ActivitiesController : BaseApiController
@@ -36,8 +38,10 @@ namespace API.Controllers
     public async Task<IActionResult> EditActivity(Guid id, Activity activity) // get activity from the body of request
     {
       activity.Id = id;
-      return Ok(await Mediator.Send(new Edit.Command { Activity = activity }));
+      return Ok(await Mediator.Send(new Edit.Command { Activity = activity })); // send back to a client
     }
+
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteActivity(Guid id)
     {

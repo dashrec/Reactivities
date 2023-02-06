@@ -3,16 +3,16 @@ using Domain;
 using MediatR;
 using Persistence;
 
-
+// this use cases are isolated from client
 // import activity from domain project
 namespace Application.Activities
 {
   public class Create
+  {
+    public class Command : IRequest  // command returns no data
     {
-        public class Command : IRequest  // command returns no data
-        {
-                    public Activity Activity { get; set; }
-        }
+      public Activity Activity { get; set; }
+    }
 
 
     public class Handler : IRequestHandler<Command>
@@ -20,9 +20,9 @@ namespace Application.Activities
       private readonly DataContext _context;
       public Handler(DataContext context)
       {
-      _context = context;
+        _context = context;
       }
-
+      // Handle is going to return an object to our API controller and our API controller is going to return the object with the HTP response.
       public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
       {
         _context.Activities.Add(request.Activity); // at this moment we don't touch a database, we are just adding activity in memory
