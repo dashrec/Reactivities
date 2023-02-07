@@ -19,6 +19,8 @@ axios.interceptors.response.use(async (response) => {
   }
 });
 
+//  we're not just going to be getting back activities. So what we need to do is think about making this a generic type of response. ref to T
+
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
 const requests = {

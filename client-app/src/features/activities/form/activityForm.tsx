@@ -1,20 +1,18 @@
 import React, { useState, ChangeEvent } from 'react';
 import { Button, Form, Segment } from 'semantic-ui-react';
-import { Activity } from '../../../app/models/activity';
+import { useStore } from '../../../app/stores/store';
+import { observer } from 'mobx-react-lite';
 
-interface Props {
-  activity: Activity | undefined;
-  closeForm: () => void;
-  createOrEdit: (activity: Activity) => void;
-  submitting: boolean;
-}
+export default observer(function ActivityForm() {
+  const { activityStore } = useStore();
+  const {
+    selectedActivity,
+    closeForm,
+    createActivity,
+    updateActivity,
+    loading,
+  } = activityStore;
 
-export default function ActivityForm({
-  activity: selectedActivity,
-  closeForm,
-  createOrEdit,
-  submitting
-}: Props) {
   const initialState = selectedActivity ?? {
     id: '',
     title: '',
@@ -25,14 +23,15 @@ export default function ActivityForm({
     venue: '',
   };
 
-
   const [activity, setActivity] = useState(initialState);
 
   function handleSubmit() {
-  createOrEdit(activity);
+    activity.id ? updateActivity(activity) : createActivity(activity);
   }
 
-  function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement >) {
+  function handleInputChange(
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
     const { name, value } = event.target; // destructure name and value from event
     setActivity({ ...activity, [name]: value }); //square bracket notation means: property with the key of name should be set to whatever the value is inside the input element
   }
@@ -62,7 +61,7 @@ export default function ActivityForm({
           placeholder="Date"
           value={activity.date}
           name="date"
-          type='date'
+          type="date"
           onChange={handleInputChange}
         />
         <Form.Input
@@ -78,8 +77,14 @@ export default function ActivityForm({
           onChange={handleInputChange}
         />
 
-        <Button loading={submitting} floated="right" positive type="submit" content="Submit" />
-        <Button 
+        <Button
+          loading={loading}
+          floated="right"
+          positive
+          type="submit"
+          content="Submit"
+        />
+        <Button
           floated="right"
           positive
           type="button"
@@ -89,4 +94,4 @@ export default function ActivityForm({
       </Form>
     </Segment>
   );
-}
+});
