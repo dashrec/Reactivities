@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Application.Activities;
 using Application.Core;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 namespace API.Extensions
 {
@@ -29,7 +31,13 @@ namespace API.Extensions
       });
       services.AddMediatR(typeof(List.Handler));
       services.AddAutoMapper(typeof(MappingProfiles).Assembly); // register MappingPrifiles as a service
-     return services;
+
+
+      services.AddFluentValidationAutoValidation();
+      services.AddValidatorsFromAssemblyContaining<Create>();
+
+
+      return services;
 
     }
   }
