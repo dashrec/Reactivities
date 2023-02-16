@@ -1,6 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
-
 import { Activity } from '../models/activity';
 import { router } from '../router/Routes';
 import { store } from '../stores/store';
