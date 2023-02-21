@@ -1,5 +1,4 @@
 using Domain;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Application.Activities;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +10,8 @@ namespace API.Controllers
 // We have API controllers and these are going to retrieve the information from our application layer.
 // it derives from BaseApiController
 {
+
+  [AllowAnonymous]
   public class ActivitiesController : BaseApiController
   {
     [HttpGet] //api/activities
