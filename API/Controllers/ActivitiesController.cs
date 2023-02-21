@@ -19,7 +19,7 @@ namespace API.Controllers
       return HandleResult(await Mediator.Send(new List.Query())); // it returns all. this Mediator derives from base class controller
     }
 
-
+    //[Authorize]
     [HttpGet("{id}")] //api/activities/someId
     public async Task<IActionResult> GetActivity(Guid id) // this id gonna match this [HttpGet("{id}")] so this id /someId
     {

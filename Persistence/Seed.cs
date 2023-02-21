@@ -1,14 +1,35 @@
 using Domain;
+using Microsoft.AspNetCore.Identity;
 
 namespace Persistence
 {
   public class Seed
+  {
+    public static async Task SeedData(DataContext context, UserManager<AppUser> userManager)  //  if we've got a static method, we can just say seedData. instead of var seed = new Seed();
     {
-        public static async Task SeedData(DataContext context)  //  if we've got a static method, we can just say seedData. instead of var seed = new Seed();
+
+      if (!userManager.Users.Any()) // check if we have any users in db. If not add some
+      {
+        var users = new List<AppUser>
+
+                    {
+                        new AppUser{DisplayName = "Bob", UserName = "bob", Email = "bob@test.com"},
+                        new AppUser{DisplayName = "Tom", UserName = "tom", Email = "tom@test.com"},
+                        new AppUser{DisplayName = "Jane", UserName = "jane", Email = "jane@test.com"},
+                    };
+
+        foreach (var user in users)
         {
-            if (context.Activities.Any()) return; // we are going to check in our database to see if we already have activities inside it. If we do then we return.
-            
-            var activities = new List<Activity>
+          await userManager.CreateAsync(user, "Pa$$w0rd");
+        }
+
+      };
+
+
+
+      if (context.Activities.Any()) return; // we are going to check in our database to see if we already have activities inside it. If we do then we return.
+
+      var activities = new List<Activity>
             {
                 new Activity
                 {
@@ -101,9 +122,9 @@ namespace Persistence
                     Venue = "Cinema",
                 }
             };
-   
-            await context.Activities.AddRangeAsync(activities);   //it saves it into memory 
-            await context.SaveChangesAsync(); // this is going to actually save those changes into the database.
-        }
+
+      await context.Activities.AddRangeAsync(activities);   //it saves it into memory 
+      await context.SaveChangesAsync(); // this is going to actually save those changes into the database.
     }
+  }
 }

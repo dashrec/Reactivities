@@ -2,13 +2,25 @@ using Microsoft.EntityFrameworkCore;
 using Persistence;
 using API.Extensions;
 using API.Middleware;
+using Microsoft.AspNetCore.Identity;
+using Domain;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 var builder = WebApplication.CreateBuilder(args); // to create something called a Kestrel server.
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+// ad policy that can be applied as a whole
+// And this effectively means that now every single controller endpoint is going to require authentication.
+builder.Services.AddControllers(opt => 
+{
+     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+     opt.Filters.Add(new AuthorizeFilter(policy));
+});
+
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration); // related to authService
 
 var app = builder.Build();
 
@@ -17,10 +29,11 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+  app.UseSwagger();
+  app.UseSwaggerUI();
 }
 app.UseCors("CorsPolicy");
+app.UseAuthentication();
 
 //app.UseHttpsRedirection();
 app.UseAuthorization();
@@ -35,14 +48,15 @@ var services = scope.ServiceProvider;
 
 try //create database
 {
-var context = services.GetRequiredService<DataContext>();
-await context.Database.MigrateAsync();// it will create db if it does not exist
-await Seed.SeedData(context);
+  var context = services.GetRequiredService<DataContext>();
+  var userManager = services.GetRequiredService<UserManager<AppUser>>();
+  await context.Database.MigrateAsync();// it will create db if it does not exist
+  await Seed.SeedData(context, userManager);
 }
-catch(Exception ex)
+catch (Exception ex)
 {
-   var logger = services.GetRequiredService<ILogger<Program>>(); //  we told the logger what class we're going to be logging against.
-   logger.LogError(ex, "An error occured during migration");
+  var logger = services.GetRequiredService<ILogger<Program>>(); //  we told the logger what class we're going to be logging against.
+  logger.LogError(ex, "An error occured during migration");
 }
 
 app.Run();
