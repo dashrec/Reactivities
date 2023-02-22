@@ -1,8 +1,10 @@
 
 using Application.Core;
+using Application.Interfaces;
 using Domain;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 
@@ -29,15 +31,34 @@ namespace Application.Activities
 
     public class Handler : IRequestHandler<Command, Result<Unit>>
     {
+    private readonly IUserAccessor _userAccessor;
+
       private readonly DataContext _context;
-      public Handler(DataContext context)
+      public Handler(DataContext context, IUserAccessor userAccessor)
       {
+      _userAccessor = userAccessor;
         _context = context;
       }
+
+
       // Handle is going to return an object to our API controller and our API controller is going to return the object with the HTtP response.
       public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
       {
+   
+        var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername()); // get user 
+        var attendee = new ActivityAttendee
+        {
+          AppUser = user,
+          Activity = request.Activity,
+          IsHost = true
+
+        };
+        request.Activity.Attendees.Add(attendee); // add attendee to activity
+
+
+        // we're going to need to add that user as an attendee and the host of that particular activity.
         _context.Activities.Add(request.Activity);
+
         var result = await _context.SaveChangesAsync() > 0;
         if (!result) return Result<Unit>.Failure("Failed to create activity");
         return Result<Unit>.Success(Unit.Value);

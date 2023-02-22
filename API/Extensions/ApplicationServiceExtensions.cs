@@ -5,6 +5,8 @@ using Application.Activities;
 using Application.Core;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Application.Interfaces;
+using Infrastructure.Security;
 
 namespace API.Extensions
 {
@@ -35,6 +37,8 @@ namespace API.Extensions
 
       services.AddFluentValidationAutoValidation();
       services.AddValidatorsFromAssemblyContaining<Create>();
+      services.AddHttpContextAccessor(); // we need to add a service for the HTTP context accesses. So that we can utilize that inside our infrastructure project.
+      services.AddScoped<IUserAccessor, UserAccessor>(); // this will make this available to be injected inside our application handlers.
 
 
       return services;

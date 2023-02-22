@@ -1,7 +1,9 @@
 using System.Text;
 using API.Services;
 using Domain;
+using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 
@@ -15,7 +17,7 @@ namespace API.Extensions
       {
         opt.Password.RequireNonAlphanumeric = false;
         opt.User.RequireUniqueEmail = true; // check for duplicate email. 
-       
+
       }).AddEntityFrameworkStores<DataContext>();
 
 
@@ -30,8 +32,18 @@ namespace API.Extensions
           ValidateAudience = false
         };
       });
+      // with this policy only the host of the activcity can edit the activity
+      services.AddAuthorization(opt =>
+      {
+        opt.AddPolicy("IsActivityHost", policy =>
+        {
+          policy.Requirements.Add(new IsHostRequirement());
 
+        });
+      });
+      services.AddTransient<IAuthorizationHandler, IsHostRequirementHandler>();
       services.AddScoped<TokenService>();
+      //  with this in place we can use IsActivityHost om endpoints
 
       return services;
     }

@@ -1,7 +1,8 @@
-//using System.ComponentModel.DataAnnotations;
-namespace Domain
+using Application.Profiles;
+
+namespace Application.Activities
 {
-  public class Activity
+  public class ActivityDto
   {
     public Guid Id { get; set; }
     // [Required]
@@ -11,10 +12,10 @@ namespace Domain
     public string Category { get; set; }
     public string City { get; set; }
     public string Venue { get; set; }
-    public bool IsCancelled { get; set; }
+    public string HostUsername { get; set; }
 
-    public ICollection<ActivityAttendee> Attendees { get; set; } = new List<ActivityAttendee>();
-     // this will add an empty attendee as a default in to activities table instead of being null. 
+    public bool IsCancelled { get; set; }
+    public ICollection<Profile> Attendees { get; set; }
+
   }
 }
-// entity is like model
