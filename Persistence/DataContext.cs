@@ -14,6 +14,9 @@ namespace Persistence
 
     public DbSet<Activity> Activities { get; set; }
     public DbSet<ActivityAttendee> ActivityAttendees { get; set; }
+   //we add dbset in case we need to query the poto collection directly from datacontext
+    public DbSet<Photo> photos { get; set; } // table name gets from here  ref to "photos"
+ 
 
     // And what we also need to do is overwrite the model, creating methods from our IdentityDbContext.
     protected override void OnModelCreating(ModelBuilder builder)
@@ -26,7 +29,7 @@ namespace Persistence
       builder.Entity<ActivityAttendee>().HasOne(u => u.AppUser).WithMany(u => u.Activities).HasForeignKey(aa => aa.AppUserId);
       builder.Entity<ActivityAttendee>().HasOne(u => u.Activity).WithMany(u => u.Attendees).HasForeignKey(aa => aa.ActivityId);
 
-      
+
 
     }
   }
