@@ -14,9 +14,10 @@ namespace Persistence
 
     public DbSet<Activity> Activities { get; set; }
     public DbSet<ActivityAttendee> ActivityAttendees { get; set; }
-   //we add dbset in case we need to query the poto collection directly from datacontext
+    //we add DbSet in case we need to query the photo collection directly 
     public DbSet<Photo> photos { get; set; } // table name gets from here  ref to "photos"
- 
+
+    public DbSet<Comment> Comments { get; set; }
 
     // And what we also need to do is overwrite the model, creating methods from our IdentityDbContext.
     protected override void OnModelCreating(ModelBuilder builder)
@@ -25,11 +26,13 @@ namespace Persistence
 
       builder.Entity<ActivityAttendee>(x => x.HasKey(aa => new { aa.AppUserId, aa.ActivityId })); // forms primary key in our table
 
-      //configure Entity so ActivityAttendee has one user and might has manny avtivities
+      //configure Entity so ActivityAttendee has one user and might has many activities
       builder.Entity<ActivityAttendee>().HasOne(u => u.AppUser).WithMany(u => u.Activities).HasForeignKey(aa => aa.AppUserId);
       builder.Entity<ActivityAttendee>().HasOne(u => u.Activity).WithMany(u => u.Attendees).HasForeignKey(aa => aa.ActivityId);
 
-
+      // cascade will mean if we delete an activity, it will cascade that delete down to the comments that were associated with that activity
+      builder.Entity<Comment>().HasOne(a => a.Activity).WithMany(c => c.Comments).OnDelete(DeleteBehavior.Cascade); 
+      
 
     }
   }

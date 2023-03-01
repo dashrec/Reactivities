@@ -22,16 +22,36 @@ namespace API.Extensions
 
 
       var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"])); // the key that we pass in here needs to match exactly what we have in our token service.
-      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
-      {
-        opt.TokenValidationParameters = new TokenValidationParameters
-        {
-          ValidateIssuerSigningKey = true,  // if it's false, it will accept any old token signed or not signed
-          IssuerSigningKey = key,
-          ValidateIssuer = false,
-          ValidateAudience = false
-        };
-      });
+
+      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+          .AddJwtBearer(opt =>
+          {
+            opt.TokenValidationParameters = new TokenValidationParameters
+            {
+              ValidateIssuerSigningKey = true,
+              IssuerSigningKey = key,
+              ValidateIssuer = false,
+              ValidateAudience = false
+            };
+
+            opt.Events = new JwtBearerEvents
+            {
+              OnMessageReceived = context =>
+                    {
+                      var accessToken = context.Request.Query["access_token"];  // the client side is going to pass our access_token in a query string.
+                      var path = context.HttpContext.Request.Path;
+                      if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/chat"))) // chat is an endpoint of our signalHub
+                      {
+                        context.Token = accessToken; // inside our hub context we will have excess to this Token
+                      }
+                      return Task.CompletedTask;
+                    }
+            };
+          });
+
+
+
+
       // with this policy only the host of the activcity can edit the activity
       services.AddAuthorization(opt =>
       {

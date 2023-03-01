@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using API.SignalR;
 
 var builder = WebApplication.CreateBuilder(args); // to create something called a Kestrel server.
 
@@ -39,6 +40,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/chat");
 
 
 // using statement means that when we're finished with this scope, anything inside it is going to be disposed or destroyed and cleaned up from memory. like garbage collector

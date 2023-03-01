@@ -28,9 +28,13 @@ namespace API.Extensions
       services.AddCors(opt =>
       {
         opt.AddPolicy("CorsPolicy", policy =>
-  {
-    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
-  });
+         {
+           policy
+                      .AllowAnyMethod()
+                      .AllowAnyHeader()
+                      .WithOrigins("http://localhost:3000")
+                      .AllowCredentials();
+         });
       });
       services.AddMediatR(typeof(List.Handler));
       services.AddAutoMapper(typeof(MappingProfiles).Assembly); // register MappingPrifiles as a service
@@ -42,7 +46,7 @@ namespace API.Extensions
       services.AddScoped<IUserAccessor, UserAccessor>(); // this will make this available to be injected inside our application handlers.
       services.AddScoped<IPhotoAccessor, PhotoAccessor>();
       services.Configure<CloudinarySettings>(config.GetSection("Cloudinary")); // the name Cloudinary must match what we call it in appsettings.json
-
+      services.AddSignalR();
 
       return services;
 
