@@ -13,13 +13,15 @@ export default observer(function FollowButton({ profile }: Props) {
   const { updateFollowing, loading } = profileStore;
 
   // it will prevents to follow yourself. we don't want to display a follow button when we are viewing our profile
-  if (userStore.user?.username === profile.username) return null;  
+  if (userStore.user?.username === profile.username) return null;
 
   function handleFollow(e: SyntheticEvent, username: string) {
     e.preventDefault();
-    profile.following ? updateFollowing(username, false) : updateFollowing(username, true);
-  }
 
+    profile.following ? updateFollowing(username, false)
+      : updateFollowing(username, true);
+  }
+  console.log(profile);
   return (
     <Reveal animated="move">
       <Reveal.Content visible style={{ width: '100%' }}>
