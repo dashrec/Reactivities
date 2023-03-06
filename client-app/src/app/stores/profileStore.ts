@@ -4,8 +4,8 @@ import agent from '../api/agent';
 import { toast } from 'react-toastify';
 import { store } from './store';
 
-export default class ProfileStore {
-  profile: Profile | null = null;
+export default class ProfileStore {  // observables
+  profile: Profile | null = null; 
   loadingProfile = false;
   uploading = false;
   loading = false;
@@ -147,31 +147,21 @@ export default class ProfileStore {
     this.loading = true;
     try {
       await agent.Profiles.updateFollowing(username);
-      store.activityStore.updateAttendeeFollowing(username);
-      runInAction(() => {
-        if (
-          this.profile &&
-          this.profile.username !== store.userStore.user?.username &&
-          this.profile.username === username
-        ) {
-          following
-            ? this.profile.followersCount++
-            : this.profile.followersCount--;
+      store.activityStore.updateAttendeeFollowing(username); // updateAttendeeFollowing is a method in activityStore that updates activity state
+      runInAction(() => { // update observers inside profileStore
+
+        if (this.profile && this.profile.username !== store.userStore.user?.username && this.profile.username === username) {
+          following ? this.profile.followersCount++ : this.profile.followersCount--;
           this.profile.following = !this.profile.following;
         }
-        if (
-          this.profile &&
-          this.profile.username === store.userStore.user?.username
-        ) {
-          following
-            ? this.profile.followingCount++
-            : this.profile.followingCount--;
+
+        if ( this.profile && this.profile.username === store.userStore.user?.username) {
+          following ? this.profile.followingCount++ : this.profile.followingCount--;
         }
+
         this.followings.forEach((profile) => {
           if (profile.username === username) {
-            profile.following
-              ? profile.followersCount--
-              : profile.followersCount++;
+            profile.following ? profile.followersCount-- : profile.followersCount++;
             profile.following = !profile.following;
           }
         });
@@ -183,13 +173,11 @@ export default class ProfileStore {
     }
   };
 
+
   loadFollowings = async (predicate: string) => {
     this.loadingFollowings = true;
     try {
-      const followings = await agent.Profiles.listFollowings(
-        this.profile!.username,
-        predicate
-      );
+      const followings = await agent.Profiles.listFollowings( this.profile!.username, predicate);
       runInAction(() => {
         this.followings = followings;
         this.loadingFollowings = false;

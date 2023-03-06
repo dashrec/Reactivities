@@ -19,6 +19,10 @@ namespace Persistence
 
     public DbSet<Comment> Comments { get; set; }
 
+    public DbSet<UserFollowing> UserFollowings { get; set; }
+
+
+
     // And what we also need to do is overwrite the model, creating methods from our IdentityDbContext.
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -31,8 +35,15 @@ namespace Persistence
       builder.Entity<ActivityAttendee>().HasOne(u => u.Activity).WithMany(u => u.Attendees).HasForeignKey(aa => aa.ActivityId);
 
       // cascade will mean if we delete an activity, it will cascade that delete down to the comments that were associated with that activity
-      builder.Entity<Comment>().HasOne(a => a.Activity).WithMany(c => c.Comments).OnDelete(DeleteBehavior.Cascade); 
-      
+      builder.Entity<Comment>().HasOne(a => a.Activity).WithMany(c => c.Comments).OnDelete(DeleteBehavior.Cascade);
+
+      // So this is going to form our relationship
+      builder.Entity<UserFollowing>(b =>
+        {
+          b.HasKey(k => new { k.ObserverId, k.TargetId }); // primary key out of those two keys
+          b.HasOne(o => o.Observer).WithMany(f => f.Followings).HasForeignKey(o => o.ObserverId).OnDelete(DeleteBehavior.Cascade);
+          b.HasOne(t => t.Target).WithMany(f => f.Followers).HasForeignKey(t => t.TargetId).OnDelete(DeleteBehavior.Cascade);
+        });
 
     }
   }
@@ -40,8 +51,5 @@ namespace Persistence
 
 
 // if we hover over the  DbContext, this tells us that it represents a session with the database
-// Activities is going to represent the table name inside our database when it gets created.
 // So now that we have this DB context class, we need to tell our application about it and we'll do that inside our program class
-
-
 // for example, if we want to query the table directly in our code, then we do need to have a DB set.

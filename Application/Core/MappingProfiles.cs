@@ -10,16 +10,27 @@ namespace Application.Core
   {
     public MappingProfiles()
     {
+      string currentUsername = null;
       CreateMap<Activity, Activity>(); // CreateMap is gonna take a look inside of activity
       CreateMap<Activity, ActivityDto>().ForMember(d => d.HostUsername, o => o.MapFrom(s => s.Attendees.FirstOrDefault(x => x.IsHost).AppUser.UserName));
       CreateMap<ActivityAttendee, AttendeeDto>()
        .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.AppUser.DisplayName))
        .ForMember(d => d.Username, o => o.MapFrom(s => s.AppUser.UserName))
        .ForMember(d => d.Bio, o => o.MapFrom(s => s.AppUser.Bio))
-       .ForMember(d => d.Image, o => o.MapFrom(s => s.AppUser.Photos.FirstOrDefault(x => x.IsMain).Url));
+       .ForMember(d => d.Image, o => o.MapFrom(s => s.AppUser.Photos.FirstOrDefault(x => x.IsMain).Url))
+       .ForMember(d => d.FollowersCount, o => o.MapFrom(s => s.AppUser.Followers.Count))
+       .ForMember(d => d.FollowingCount, o => o.MapFrom(s => s.AppUser.Followings.Count))
+       .ForMember(d => d.Following, o => o.MapFrom(s => s.AppUser.Followers.Any(x => x.Observer.UserName == currentUsername)));
 
       // we go from  user to profile and update set main photo
-      CreateMap<AppUser, Profiles.Profile>().ForMember(d => d.Image, o => o.MapFrom(s => s.Photos.FirstOrDefault(x => x.IsMain).Url));
+      CreateMap<AppUser, Profiles.Profile>()
+      .ForMember(d => d.Image, o => o.MapFrom(s => s.Photos.FirstOrDefault(x => x.IsMain).Url))
+      .ForMember(d => d.FollowersCount, o => o.MapFrom(s => s.Followers.Count)) // destination + options + source 
+      .ForMember(d => d.FollowingCount, o => o.MapFrom(s => s.Followings.Count))
+      // we want to know if the currently logged in user is inside that follower's collection as a follower of this particular user.
+      .ForMember(d => d.Following, o => o.MapFrom(s => s.Followers.Any(x => x.Observer.UserName == currentUsername))); // find current user in followers and set following to true 
+
+
       CreateMap<Comment, CommentDto>()
        .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.Author.DisplayName)) // so we get DisplayName from related author of the comment
        .ForMember(d => d.Username, o => o.MapFrom(s => s.Author.UserName))

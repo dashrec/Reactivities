@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { Button, Container, Header, Image, Segment } from 'semantic-ui-react';
 import { useStore } from '../../app/stores/store';
 import LoginForm from '../users/LoginForm';
-import RegsiterForm from '../users/RegsiterForm';
+import RegisterForm from '../users/RegisterForm';
+
 
 export default observer(function HomePage() {
   const { userStore, modalStore } = useStore();
@@ -42,7 +43,7 @@ export default observer(function HomePage() {
             </Button>
 
             <Button
-              onClick={() => modalStore.openModal(<RegsiterForm />)}
+              onClick={() => modalStore.openModal(<RegisterForm />)}
               size="huge"
               inverted
             >
@@ -54,11 +55,3 @@ export default observer(function HomePage() {
     </Segment>
   );
 });
-
-{
-  /* <Header as="h2" inverted content="Welcome to Reactivities" />
-<Button as={Link} to="/login" size="huge" inverted>
-  Login!
-</Button>
-*/
-}

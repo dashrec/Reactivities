@@ -10,7 +10,13 @@ namespace Application.Profiles
     public string Bio { get; set; }
 
     public string Image { get; set; }
+
+    public bool Following { get; set; } //  We want to know if currently logged in User is following that particular user.
+    public int FollowersCount { get; set; } // we need to map the result of this in to the profiles class
+    public int FollowingCount { get; set; }
+
     public ICollection<Photo> Photos { get; set; }
 
   }
 }
+

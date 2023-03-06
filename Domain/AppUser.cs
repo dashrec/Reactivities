@@ -14,7 +14,9 @@ namespace Domain
     public ICollection<ActivityAttendee> Activities { get; set; }
 
     public ICollection<Photo> Photos { get; set; } // adds relation to photo
+
+    public ICollection<UserFollowing> Followings { get; set; } // Who is the current user following 
+    public ICollection<UserFollowing> Followers { get; set; } // Who is following the currently logged in user?
   }
 }
 
-// DisplayName, Bio will be added in migrations additionally
