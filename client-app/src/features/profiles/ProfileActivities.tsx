@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect } from 'react';
+import { SyntheticEvent, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Tab, Grid, Header, Card, Image, TabProps } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
@@ -7,25 +7,21 @@ import { format } from 'date-fns';
 import { useStore } from '../../app/stores/store';
 
 const panes = [
-  { menuItem: 'Future Events', pane: { key: 'future' } },
+  { menuItem: 'Future Events', pane: { key: 'future' } }, // those keys must match query keys in application layer, profiles, ListActivities handler
   { menuItem: 'Past Events', pane: { key: 'past' } },
   { menuItem: 'Hosting', pane: { key: 'hosting' } },
 ];
 
 export default observer(function ProfileActivities() {
   const { profileStore } = useStore();
-  const { loadUserActivities, profile, loadingActivities, userActivities } =
-    profileStore;
+  const { loadUserActivities, profile, loadingActivities, userActivities } = profileStore;
 
   useEffect(() => {
-    loadUserActivities(profile!.username);
+    loadUserActivities(profile!.username); // default case we do not need to send predicate we just load all activities
   }, [loadUserActivities, profile]);
 
   const handleTabChange = (e: SyntheticEvent, data: TabProps) => {
-    loadUserActivities(
-      profile!.username,
-      panes[data.activeIndex as number].pane.key
-    );
+    loadUserActivities(profile!.username, panes[data.activeIndex as number].pane.key); // predicate will be one of the panes.key 
   };
 
   return (

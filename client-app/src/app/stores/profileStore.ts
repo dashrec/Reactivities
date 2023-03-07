@@ -188,7 +188,7 @@ export default class ProfileStore {  // observables
     }
   };
 
-  loadUserActivities = async (username: string, predicate?: string) => {
+  loadUserActivities = async (username: string, predicate?: string) => { // if we do not send predicate it's default case and therefore can be optional 
     this.loadingActivities = true;
     try {
       const activities = await agent.Profiles.listActivities(

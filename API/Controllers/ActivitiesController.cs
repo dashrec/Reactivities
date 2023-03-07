@@ -1,7 +1,9 @@
+using Application.Activities;
+using Application.Core;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
-using Application.Activities;
 using Microsoft.AspNetCore.Authorization;
+
 
 namespace API.Controllers
 // our controllers are going to receive an HTTP request from a client and controller is going to send this request to application layer
@@ -15,9 +17,9 @@ namespace API.Controllers
   public class ActivitiesController : BaseApiController
   {
     [HttpGet] //api/activities
-    public async Task<IActionResult> GetActivities()
+    public async Task<IActionResult> GetActivities([FromQuery]ActivityParams param)
     {
-      return HandleResult(await Mediator.Send(new List.Query())); // it returns all. this Mediator derives from base class controller
+      return HandlePagedResult(await Mediator.Send(new List.Query { Params = param })); // it returns all. this Mediator derives from base class controller
     }
 
     //[Authorize]
@@ -52,7 +54,7 @@ namespace API.Controllers
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteActivity(Guid id)
     {
-      return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
+      return HandleResult(await Mediator.Send(new Application.Activities.Delete.Command { Id = id }));
     }
 
     [HttpPost("{id}/attend")]

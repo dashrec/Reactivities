@@ -30,7 +30,7 @@ namespace Application.Profiles
       public async Task<Result<Profile>> Handle(Query request, CancellationToken cancellationToken)
       {
 
-        // get user type of profile
+        // get user, type of profile
         // to get mapping from user object to our profile, we need to add code in MappingProfiles 
         var user = await _context.Users.ProjectTo<Profile>(_mapper.ConfigurationProvider, 
         new { currentUsername = _userAccessor.GetUsername() }).SingleOrDefaultAsync(x => x.Username == request.Username);
