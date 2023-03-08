@@ -21,7 +21,7 @@ export default class CommentStore {
       // get selected activity
 
       this.hubConnection = new HubConnectionBuilder()
-        .withUrl('http://localhost:5000/chat?activityId=' + activityId, {
+        .withUrl(process.env.REACT_APP_CHAT_URL +'/?activityId=' + activityId, {
           accessTokenFactory: () => store.userStore.user?.token!, //pass token. user can technically be null so use exclamation mark
         })
         .withAutomaticReconnect() // to reconnect our client to the chat hub if for whatever reason they lose their connection
@@ -39,7 +39,7 @@ export default class CommentStore {
         // LoadComments must match what we called in signalR ChatHub
         runInAction(() => {
           comments.forEach((comment) => {
-            comment.createdAt = new Date(comment.createdAt + 'Z'); // update observable
+            comment.createdAt = new Date(comment.createdAt); // update observable
           });
           this.comments = comments; // update observable
         });

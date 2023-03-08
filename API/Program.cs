@@ -39,8 +39,12 @@ app.UseAuthentication();
 //app.UseHttpsRedirection();
 app.UseAuthorization();
 
+app.UseDefaultFiles(); // look inside wwwroot folder and fish out index.html or index.htm to serve from kestrel server
+app.UseStaticFiles(); // serve content from wwwroot folder by default
+
 app.MapControllers();
 app.MapHub<ChatHub>("/chat");
+app.MapFallbackToController("Index", "Fallback"); // Index is a name of method inside FallbackController and the second param is first part of Fallback <-- Controller 
 
 
 // using statement means that when we're finished with this scope, anything inside it is going to be disposed or destroyed and cleaned up from memory. like garbage collector
@@ -51,8 +55,11 @@ var services = scope.ServiceProvider;
 try //create database
 {
   var context = services.GetRequiredService<DataContext>();
+  
+
   var userManager = services.GetRequiredService<UserManager<AppUser>>();
-  await context.Database.MigrateAsync();// it will create db if it does not exist
+  await context.Database.MigrateAsync(); // it will create db if it does not exist
+  
   await Seed.SeedData(context, userManager);
 }
 catch (Exception ex)

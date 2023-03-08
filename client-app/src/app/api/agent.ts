@@ -13,7 +13,7 @@ const sleep = (delay: number) => {
   });
 };
 
-axios.defaults.baseURL = 'http://localhost:5000/api';
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 // So for every request now  we  have a token, we are going to add this token to our headers as an authorization header.
 axios.interceptors.request.use((config) => {
@@ -24,7 +24,7 @@ axios.interceptors.request.use((config) => {
 
 axios.interceptors.response.use(
   async (response) => {
-    await sleep(1000);
+    if (process.env.NODE_ENV === 'development') await sleep(1000);
 
     const pagination = response.headers['pagination'];
     if (pagination) {
@@ -97,7 +97,9 @@ const requests = {
 
 const Activities = {
   list: (params: URLSearchParams) =>
-    axios.get<PaginatedResult<Activity[]>>('/activities', { params }).then(responseBody),
+    axios
+      .get<PaginatedResult<Activity[]>>('/activities', { params })
+      .then(responseBody),
   details: (id: string) => requests.get<Activity>(`/activities/${id}`),
   create: (activity: ActivityFormValues) =>
     axios.post<void>('/activities', activity),
@@ -135,11 +137,11 @@ const Profiles = {
   listFollowings: (username: string, predicate: string) =>
     requests.get<Profile[]>(`/follow/${username}?predicate=${predicate}`), // we are gonna be returning list of Profile
 
-  listActivities: (username: string, predicate: string) => requests.get<UserActivity[]>(`/profiles/${username}/activities?predicate=${predicate}`), // send predicate as add on query string
+  listActivities: (username: string, predicate: string) =>
+    requests.get<UserActivity[]>(
+      `/profiles/${username}/activities?predicate=${predicate}`
+    ), // send predicate as add on query string
 };
-
-
-
 
 const agent = {
   Activities,

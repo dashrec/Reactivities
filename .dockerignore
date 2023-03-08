@@ -1,0 +1,4 @@
+**/bin
+**/obj
+
+# we dont need to copy them inside container because these get recreated when we do the dotnet restore and the dotnet publish.
