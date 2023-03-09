@@ -19,11 +19,11 @@ namespace API.Extensions
 
       services.AddEndpointsApiExplorer();
       services.AddSwaggerGen();
-             /*  services.AddDbContext<DataContext>(opt =>
-                 {
-                   opt.UseNpgsql(config.GetConnectionString("DefaultConnection"));     
+      /*  services.AddDbContext<DataContext>(opt =>
+          {
+            opt.UseNpgsql(config.GetConnectionString("DefaultConnection"));     
 
-                 });  */
+          });  */
 
       services.AddDbContext<DataContext>(options =>
               {
